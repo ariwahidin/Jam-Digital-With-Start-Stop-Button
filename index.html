@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Clock with Start/Stop Buttons</title>
+    <style>
+        #clock {
+            font-family: 'Arial', sans-serif;
+            font-size: 2em;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        #stopButton,
+        #startButton {
+            display: block;
+            margin: 20px auto;
+            padding: 10px;
+            font-size: 1em;
+        }
+
+        #log {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="clock"></div>
+    <button id="stopButton" onclick="stopClock()" disabled>Stop Clock</button>
+    <button id="startButton" onclick="startClock()">Start Clock</button>
+    <p id="log"></p>
+
+    <script>
+        var stopClockFlag = true; // Atur menjadi true agar jam tidak dimulai saat halaman dimuat
+        var startTime, stopTime;
+
+        function updateClock() {
+            if (stopClockFlag) {
+                return; // Hentikan pembaruan jam jika flag berhenti diatur menjadi true
+            }
+
+            var now = new Date();
+            var hours = now.getHours();
+            var minutes = now.getMinutes();
+            var seconds = now.getSeconds();
+
+            // Pad single digit minutes and seconds with a leading zero
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+
+            var timeString = hours + ':' + minutes + ':' + seconds;
+
+            document.getElementById('clock').innerText = timeString;
+
+            // Update every second
+            setTimeout(updateClock, 1000);
+        }
+
+        function stopClock() {
+            stopClockFlag = true;
+            stopTime = new Date(); // Catat waktu berhenti
+            document.getElementById('stopButton').disabled = true;
+            document.getElementById('startButton').disabled = false;
+
+            // Tampilkan log waktu start dan stop
+            displayLog();
+        }
+
+        function startClock() {
+            stopClockFlag = false;
+            startTime = new Date(); // Catat waktu mulai
+            document.getElementById('stopButton').disabled = false;
+            document.getElementById('startButton').disabled = true;
+            updateClock(); // Panggil updateClock untuk memulai pembaruan kembali
+            displayLogStart();
+        }
+
+        function displayLogStart() {
+            var logElement = document.getElementById('log');
+            logElement.innerHTML = "Waktu Mulai: " + formatTime(startTime) + "<br>";
+        }
+
+        function displayLog() {
+            var logElement = document.getElementById('log');
+            logElement.innerHTML = "Waktu Mulai: " + formatTime(startTime) + "<br>" +
+                "Waktu Berhenti: " + formatTime(stopTime);
+        }
+
+        function formatTime(time) {
+            var hours = time.getHours();
+            var minutes = time.getMinutes();
+            var seconds = time.getSeconds();
+
+            // Pad single digit minutes and seconds with a leading zero
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+
+            return hours + ':' + minutes + ':' + seconds;
+        }
+
+        // Tidak memanggil updateClock secara otomatis saat halaman dimuat
+    </script>
+</body>
+
+</html>
